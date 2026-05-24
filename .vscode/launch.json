@@ -9,7 +9,8 @@
             "request": "launch",
             "name": "Launch Chrome against localhost",
             "url": "http://localhost:5173",
-            "webRoot": "${workspaceFolder}/weather-app"
+            "webRoot": "${workspaceFolder}/weather-app",
+            "preLaunchTask": "Start Dev Server"
         }
     ]
 }
