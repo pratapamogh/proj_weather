@@ -26,11 +26,11 @@ const ForecastCard = ({ daily }) => {
             minTemp: daily.temperature_2m_min[index],
             weatherCode: daily.weather_code[index]
         };
-    }).slice(1, 6); // Tomorrow to next 5 days
+    }).slice(1, 8); // Tomorrow to next 7 days
 
     return (
         <div className="glass-card p-6 w-full mt-6">
-            <h3 className="text-xl font-semibold mb-6 text-white text-glow">5-Day Forecast</h3>
+            <h3 className="text-xl font-semibold mb-6 text-white text-glow">7-Day Forecast</h3>
             <div className="flex overflow-x-auto gap-4 pb-4 hide-scrollbar snap-x">
                 {forecasts.map((forecast, i) => {
                     const condition = getWeatherCondition(forecast.weatherCode);

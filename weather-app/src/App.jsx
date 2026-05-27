@@ -1,28 +1,26 @@
 import { useState, useEffect } from 'react';
 import Navbar from './components/Navbar';
+import { useTheme } from './hooks/useTheme';
+import { useLocalStorage } from './hooks/useLocalStorage';
 import Footer from './components/Footer';
 import Dashboard from './components/Dashboard';
 import { useWeather } from './hooks/useWeather';
 import { getWeatherCondition } from './services/weatherApi';
 
 function App() {
-  const [theme, setTheme] = useState('dark');
+  const { theme, toggleTheme } = useTheme();
   const weather = useWeather();
   const [bgClass, setBgClass] = useState('bg-gradient-to-br from-gray-900 via-slate-900 to-black');
+  const [favorites, setFavorites] = useLocalStorage('weather-favorites', []);
 
-  const toggleTheme = () => {
-    setTheme(prev => prev === 'dark' ? 'light' : 'dark');
+  const toggleFavorite = (cityName) => {
+    setFavorites(prev => {
+      if (prev.includes(cityName)) {
+        return prev.filter(c => c !== cityName);
+      }
+      return [...prev, cityName];
+    });
   };
-
-  useEffect(() => {
-    if (theme === 'dark') {
-      document.body.classList.add('bg-background', 'text-white');
-      document.body.classList.remove('bg-gray-100', 'text-gray-900');
-    } else {
-      document.body.classList.add('bg-gray-100', 'text-gray-900');
-      document.body.classList.remove('bg-background', 'text-white');
-    }
-  }, [theme]);
 
   useEffect(() => {
     if (weather.data?.current) {
@@ -64,10 +62,18 @@ function App() {
         toggleTheme={toggleTheme}
         onSearch={weather.fetchWeatherByCity}
         onLocation={weather.fetchCurrentLocationWeather}
+        favorites={favorites}
+        onSelectFavorite={weather.fetchWeatherByCity}
       />
 
       <main className="flex-grow container mx-auto px-4 py-8 flex flex-col items-center justify-center z-10 w-full mt-24 pb-12">
-        <Dashboard weather={weather} loading={weather.loading} error={weather.error} />
+        <Dashboard
+          weather={weather}
+          loading={weather.loading}
+          error={weather.error}
+          favorites={favorites}
+          onToggleFavorite={toggleFavorite}
+        />
       </main>
 
       <Footer />

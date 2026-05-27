@@ -58,9 +58,21 @@ export const useWeather = () => {
         );
     };
 
-    // Try Bangalore or New Delhi as default for Amogh Pratap Singh if no location!
+    // Check if location permission is already granted, otherwise default to New Delhi
     useEffect(() => {
-        fetchWeatherByCity('New Delhi');
+        if (navigator.permissions && navigator.permissions.query) {
+            navigator.permissions.query({ name: 'geolocation' }).then(result => {
+                if (result.state === 'granted') {
+                    fetchCurrentLocationWeather();
+                } else {
+                    fetchWeatherByCity('New Delhi');
+                }
+            }).catch(() => {
+                fetchWeatherByCity('New Delhi');
+            });
+        } else {
+            fetchWeatherByCity('New Delhi');
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 

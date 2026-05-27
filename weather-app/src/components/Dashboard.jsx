@@ -2,9 +2,10 @@ import React from 'react';
 import WeatherCard from './WeatherCard';
 import WeatherDetails from './WeatherDetails';
 import ForecastCard from './ForecastCard';
+import WeatherChart from './WeatherChart';
 import { AlertCircle } from 'lucide-react';
 
-const Dashboard = ({ weather, loading, error }) => {
+const Dashboard = ({ weather, loading, error, favorites, onToggleFavorite }) => {
 
     if (loading) {
         return (
@@ -33,11 +34,17 @@ const Dashboard = ({ weather, loading, error }) => {
 
     return (
         <div className="w-full max-w-6xl mx-auto flex flex-col gap-6 animate-in fade-in slide-in-from-bottom-8 duration-700">
-            <WeatherCard current={weather.data.current} location={weather.location} />
+            <WeatherCard
+                current={weather.data.current}
+                location={weather.location}
+                favorites={favorites}
+                onToggleFavorite={onToggleFavorite}
+            />
 
             <div className="flex flex-col lg:flex-row gap-6 w-full">
-                <div className="w-full lg:w-2/3">
+                <div className="w-full lg:w-2/3 flex flex-col gap-6">
                     <WeatherDetails current={weather.data.current} daily={weather.data.daily} />
+                    <WeatherChart hourly={weather.data.hourly} />
                 </div>
                 <div className="w-full lg:w-1/3">
                     <ForecastCard daily={weather.data.daily} />

@@ -1,6 +1,6 @@
 import { getWeatherCondition } from '../services/weatherApi';
 import { format } from 'date-fns';
-import { Cloud, CloudFog, CloudLightning, CloudRain, CloudSnow, Sun, Moon } from 'lucide-react';
+import { Cloud, CloudFog, CloudLightning, CloudRain, CloudSnow, Sun, Moon, Star } from 'lucide-react';
 
 const WeatherIcon = ({ type, isDay, className }) => {
     const props = { className: `${className} animate-pulse drop-shadow-[0_0_15px_currentColor]` };
@@ -15,15 +15,23 @@ const WeatherIcon = ({ type, isDay, className }) => {
     }
 };
 
-const WeatherCard = ({ current, location }) => {
+const WeatherCard = ({ current, location, favorites = [], onToggleFavorite }) => {
     if (!current || !location) return null;
 
     const condition = getWeatherCondition(current.weather_code);
     const isDay = current.is_day ? current.is_day === 1 : true; // fallback if is_day isn't passed directly, OpenMeteo gives it in current sometimes, but we can assume day if not given or calculate. Let's just assume Day, or rely on sunrise/sunset.
+    const isFavorite = favorites.includes(location.name);
 
     return (
-        <div className="glass-card w-full p-8 md:p-12 flex flex-col md:flex-row items-center justify-between text-white md:min-h-[300px]">
-            <div className="flex flex-col items-center md:items-start space-y-4 z-10 w-full md:w-1/2">
+        <div className="glass-card w-full p-8 md:p-12 flex flex-col md:flex-row items-center justify-between text-white md:min-h-[300px] relative group overflow-hidden">
+            <button
+                onClick={() => onToggleFavorite(location.name)}
+                className="absolute top-4 right-4 md:top-6 md:right-6 p-2 rounded-full bg-white/5 hover:bg-white/20 border border-transparent hover:border-white/20 transition-all z-20 group-hover:scale-105"
+                title={isFavorite ? "Remove from favorites" : "Add to favorites"}
+            >
+                <Star className={`w-8 h-8 transition-colors ${isFavorite ? 'fill-yellow-400 text-yellow-400 drop-shadow-[0_0_10px_rgba(250,204,21,0.6)]' : 'text-gray-400 hover:text-white'}`} />
+            </button>
+            <div className="flex flex-col items-center md:items-start space-y-4 z-10 w-full md:w-1/2 mt-4 md:mt-0">
                 <h2 className="text-4xl md:text-5xl font-bold tracking-wider">{location.name}</h2>
                 {location.country && <p className="text-lg text-gray-300 tracking-widest">{location.country}</p>}
 
